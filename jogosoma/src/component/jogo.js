@@ -20,7 +20,8 @@ const estilos = StyleSheet.create({
     target: {
         fontSize: 40,
         backgroundColor: '#aaa',
+        marginHorizontal: 50,
+        textAlign: 'center',
     }
 });
-
 export default Jogo;
