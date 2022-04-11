@@ -4,7 +4,7 @@ import Jogo from './jogo';
 
 export default function Soma() {
     return <View style={estilos.container}>
-        <Jogo />
+        <Jogo totalNumeroRandomico={6}/>
     </View>
 }
 
