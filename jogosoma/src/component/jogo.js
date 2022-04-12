@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
-
+import NumeroAleatorio from './numero-aleatorio.js';
 class Jogo extends React.Component {
     propTypes = {
         totalNumeroRandomico: PropTypes.string.isRequired,
@@ -18,7 +18,7 @@ class Jogo extends React.Component {
                 <Text style={estilos.target}>{this.target}</Text>
                 <View style={estilos.containerNumerosAleatorios}>
                     {this.numerosAleatorios.map((numero, indice) =>
-                        <Text style={estilos.aleatorios} key={indice}>{numero}</Text>
+                        <NumeroAleatorio chave={indice} numero={numero}/>
                     )}
                 </View>
             </View>
@@ -32,14 +32,6 @@ const estilos = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-around'
-    },
-    aleatorios: {
-        backgroundColor: '#999',
-        width: 100,
-        marginHorizontal: 15,
-        marginVertical: 25,
-        fontSize: 35,
-        textAlign: 'center',
     },
     container: {
         backgroundColor: '#fff',
