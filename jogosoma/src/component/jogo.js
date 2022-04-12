@@ -7,24 +7,40 @@ class Jogo extends React.Component {
         totalNumeroRandomico: PropTypes.string.isRequired,
     };
     numerosAleatorios = Array
-                   .from({ length: this.props.totalNumeroRandomico })
-                   .map( () => 1 + Math.floor(10 * Math.random()) );
+        .from({ length: this.props.totalNumeroRandomico })
+        .map(() => 1 + Math.floor(10 * Math.random()));
     target = this.numerosAleatorios
-                 .slice(0, this.props.totalNumeroRandomico - 2)
-                 .reduce( (valorAnterior, valorAtual) => valorAnterior + valorAtual, 0 );
+        .slice(0, this.props.totalNumeroRandomico - 2)
+        .reduce((valorAnterior, valorAtual) => valorAnterior + valorAtual, 0);
     render() {
         return (
-            <View style={ estilos.container }>
+            <View style={estilos.container}>
                 <Text style={estilos.target}>{this.target}</Text>
-                {
-                    this.numerosAleatorios.map((numero) => <Text>{numero}</Text>)
-                }
+                <View style={estilos.containerNumerosAleatorios}>
+                    {this.numerosAleatorios.map((numero, indice) =>
+                        <Text style={estilos.aleatorios} key={indice}>{numero}</Text>
+                    )}
+                </View>
             </View>
         );
     }
 }
 
 const estilos = StyleSheet.create({
+    containerNumerosAleatorios: {
+        flex: 1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around'
+    },
+    aleatorios: {
+        backgroundColor: '#999',
+        width: 100,
+        marginHorizontal: 15,
+        marginVertical: 25,
+        fontSize: 35,
+        textAlign: 'center',
+    },
     container: {
         backgroundColor: '#fff',
         flex: 1,
@@ -35,6 +51,7 @@ const estilos = StyleSheet.create({
         backgroundColor: '#aaa',
         marginHorizontal: 50,
         textAlign: 'center',
+        margin:50,
     }
 });
 export default Jogo;
