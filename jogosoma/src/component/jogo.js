@@ -7,7 +7,7 @@ class Jogo extends React.Component {
         totalNumeroRandomico: PropTypes.number.isRequired,
     };
     state = {
-        numerosSelecionados: [],
+        idsSelecionados: [],
     };
     numerosAleatorios = Array
         .from({ length: this.props.totalNumeroRandomico })
@@ -16,17 +16,36 @@ class Jogo extends React.Component {
         .slice(0, this.props.totalNumeroRandomico - 2)
         .reduce((valorAnterior, valorAtual) => valorAnterior + valorAtual, 0);
     isNumeroBloqueado = (indiceNumero) => { 
-        return this.state.numerosSelecionados.indexOf(indiceNumero) >= 0;
+        return this.state.idsSelecionados.indexOf(indiceNumero) >= 0;
     };
     numerosEscolhidos = (indice)=> {
         this.setState((prevState) => ({
-            numerosSelecionados: [...prevState.numerosSelecionados, indice],
+            idsSelecionados: [...prevState.idsSelecionados, indice],
         }));
+        console.log('numeros selecionados: ', this.state.idsSelecionados)
+    };
+    statusDoJogo = () => {
+        const somatoria = this.state.idsSelecionados.reduce((acumulador, numeroAtual) => {
+            return acumulador + this.numerosAleatorios[numeroAtual];
+        }, 0);
+        //console.warn('o resultado da soma: ', somatoria);
+        if (somatoria < this.target) {
+            return 'JOGANDO';
+        }
+        if (somatoria === this.target) {
+            return 'GANHOU';
+        }
+        if (somatoria > this.target) {
+            return 'PERDEU';
+        }
     };
     render() {
+        const mensagemStatus = this.statusDoJogo();
         return (
             <View style={estilos.container}>
-                <Text style={estilos.target}>{this.target}</Text>
+                <Text style={[estilos.target, estilos[`STATUS_${mensagemStatus}`]]}>
+                    {this.target}
+                </Text>
                 <View style={estilos.containerNumerosAleatorios}>
                     {this.numerosAleatorios.map((numero, indice) => (
                         <NumeroAleatorio 
@@ -38,6 +57,7 @@ class Jogo extends React.Component {
                         />
                     ))}
                 </View>
+                <Text>{ mensagemStatus }</Text>
             </View>
         );
     }
@@ -57,10 +77,18 @@ const estilos = StyleSheet.create({
     },
     target: {
         fontSize: 40,
-        backgroundColor: '#aaa',
         marginHorizontal: 50,
         textAlign: 'center',
         margin:50,
-    }
+    },
+    STATUS_JOGANDO: {
+        backgroundColor: '#aaa',
+    },
+    STATUS_GANHOU: {
+        backgroundColor: 'green',
+    },
+    STATUS_PERDEU: {
+        backgroundColor: 'red',
+    },
 });
 export default Jogo;

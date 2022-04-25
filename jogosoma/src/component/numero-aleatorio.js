@@ -11,13 +11,19 @@ class NumeroAleatorio extends React.Component {
         onPress: PropTypes.func.isRequired,
     };
     handlePress = () => { 
+        if (this.props.bloqueado) { 
+            return; 
+        }
         this.props.onPress(this.props.id);
     };
     render() {
         console.log('bloqueado', this.props.bloqueado);
         return (
             <TouchableOpacity onPress={this.handlePress}>
-                <Text style={[ estilos.aleatorios, this.props.bloqueado && estilos.desabilitados ]}>
+                <Text 
+                    style={[ estilos.aleatorios, this.props.bloqueado && estilos.desabilitados ]} 
+                    key={this.props.id}
+                >
                     {this.props.numero}
                 </Text>
             </TouchableOpacity>
