@@ -1,14 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 class NumeroAleatorio extends React.Component {
     static protoTypes = {
+        key: PropTypes.number.isRequired,
+        id: PropTypes.number.isRequired,
         numero: PropTypes.number.isRequired,
+        bloqueado: PropTypes.bool.isRequired,
+        onPress: PropTypes.func.isRequired,
+    };
+    handlePress = () => { 
+        this.props.onPress(this.props.id);
     };
     render() {
+        console.log('bloqueado', this.props.bloqueado);
         return (
-            <Text style={estilos.aleatorios}>{this.props.numero}</Text>
+            <TouchableOpacity onPress={this.handlePress}>
+                <Text style={[ estilos.aleatorios, this.props.bloqueado && estilos.desabilitados ]}>
+                    {this.props.numero}
+                </Text>
+            </TouchableOpacity>
         );
     }
 }
@@ -21,5 +33,8 @@ const estilos = StyleSheet.create({
         fontSize: 35,
         textAlign: 'center',
     },
+    desabilitados: {
+        opacity: 0.3
+    }
 });
 export default NumeroAleatorio;

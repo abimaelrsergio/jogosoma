@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 import NumeroAleatorio from './numero-aleatorio.js';
 class Jogo extends React.Component {
-    propTypes = {
-        totalNumeroRandomico: PropTypes.string.isRequired,
+    static propTypes = {
+        totalNumeroRandomico: PropTypes.number.isRequired,
+    };
+    state = {
+        numerosSelecionados: [],
     };
     numerosAleatorios = Array
         .from({ length: this.props.totalNumeroRandomico })
@@ -12,14 +15,28 @@ class Jogo extends React.Component {
     target = this.numerosAleatorios
         .slice(0, this.props.totalNumeroRandomico - 2)
         .reduce((valorAnterior, valorAtual) => valorAnterior + valorAtual, 0);
+    isNumeroBloqueado = (indiceNumero) => { 
+        return this.state.numerosSelecionados.indexOf(indiceNumero) >= 0;
+    };
+    numerosEscolhidos = (indice)=> {
+        this.setState((prevState) => ({
+            numerosSelecionados: [...prevState.numerosSelecionados, indice],
+        }));
+    };
     render() {
         return (
             <View style={estilos.container}>
                 <Text style={estilos.target}>{this.target}</Text>
                 <View style={estilos.containerNumerosAleatorios}>
-                    {this.numerosAleatorios.map((numero, indice) =>
-                        <NumeroAleatorio chave={indice} numero={numero}/>
-                    )}
+                    {this.numerosAleatorios.map((numero, indice) => (
+                        <NumeroAleatorio 
+                            chave={indice} 
+                            id={indice}
+                            numero={numero} 
+                            bloqueado={this.isNumeroBloqueado(indice)}
+                            onPress={this.numerosEscolhidos}
+                        />
+                    ))}
                 </View>
             </View>
         );
