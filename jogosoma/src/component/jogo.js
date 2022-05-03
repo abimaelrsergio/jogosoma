@@ -2,33 +2,63 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 import NumeroAleatorio from './numero-aleatorio.js';
+
 class Jogo extends React.Component {
     static propTypes = {
         totalNumeroRandomico: PropTypes.number.isRequired,
+        tempoJogo: PropTypes.number.isRequired
     };
     state = {
         idsSelecionados: [],
+        tempoRestante: this.props.tempoJogo
     };
+    statusDoJogo = 'JOGANDO';
+    componentDidMount() {
+        this.intervalId = setInterval(() => {
+            this.setState((estadoAnterior) => {
+                return { tempoRestante: estadoAnterior.tempoRestante - 1 };
+            }, () => {
+                if (this.state.tempoRestante === 0) {
+                    clearInterval(this.intervalId);
+                }
+            });
+        }, 1000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.intervalId);
+    }
+
+    componentWillUpdate(propriedades, proxEstado) {
+        if (proxEstado.idsSelecionados !== this.state.idsSelecionados || proxEstado.tempoRestante === 0) {
+            this.statusDoJogo = this.calcularStatusDoJogo(proxEstado);
+            if (this.statusDoJogo !== 'JOGANDO') {
+                clearInterval(this.intervalId);
+            }
+        }
+    }
+
     numerosAleatorios = Array
         .from({ length: this.props.totalNumeroRandomico })
         .map(() => 1 + Math.floor(10 * Math.random()));
     target = this.numerosAleatorios
         .slice(0, this.props.totalNumeroRandomico - 2)
         .reduce((valorAnterior, valorAtual) => valorAnterior + valorAtual, 0);
-    isNumeroBloqueado = (indiceNumero) => { 
+    isNumeroBloqueado = (indiceNumero) => {
         return this.state.idsSelecionados.indexOf(indiceNumero) >= 0;
     };
-    numerosEscolhidos = (indice)=> {
+    numerosEscolhidos = (indice) => {
         this.setState((prevState) => ({
             idsSelecionados: [...prevState.idsSelecionados, indice],
         }));
-        console.log('numeros selecionados: ', this.state.idsSelecionados)
     };
-    statusDoJogo = () => {
-        const somatoria = this.state.idsSelecionados.reduce((acumulador, numeroAtual) => {
+    calcularStatusDoJogo = (proxEstado) => {
+        const somatoria = proxEstado.idsSelecionados.reduce((acumulador, numeroAtual) => {
             return acumulador + this.numerosAleatorios[numeroAtual];
         }, 0);
-        //console.warn('o resultado da soma: ', somatoria);
+        if (proxEstado.tempoRestante === 0) {
+            return 'PERDEU';
+        }
         if (somatoria < this.target) {
             return 'JOGANDO';
         }
@@ -40,7 +70,7 @@ class Jogo extends React.Component {
         }
     };
     render() {
-        const mensagemStatus = this.statusDoJogo();
+        const mensagemStatus = this.statusDoJogo;
         return (
             <View style={estilos.container}>
                 <Text style={[estilos.target, estilos[`STATUS_${mensagemStatus}`]]}>
@@ -48,16 +78,18 @@ class Jogo extends React.Component {
                 </Text>
                 <View style={estilos.containerNumerosAleatorios}>
                     {this.numerosAleatorios.map((numero, indice) => (
-                        <NumeroAleatorio 
-                            chave={indice} 
+                        <NumeroAleatorio
+                            chave={indice}
                             id={indice}
-                            numero={numero} 
-                            bloqueado={this.isNumeroBloqueado(indice)}
+                            numero={numero}
+                            bloqueado={
+                                this.isNumeroBloqueado(indice) || mensagemStatus !== 'JOGANDO'
+                            }
                             onPress={this.numerosEscolhidos}
                         />
                     ))}
                 </View>
-                <Text>{ mensagemStatus }</Text>
+                <Text>{this.state.tempoRestante}</Text>
             </View>
         );
     }
@@ -79,7 +111,7 @@ const estilos = StyleSheet.create({
         fontSize: 40,
         marginHorizontal: 50,
         textAlign: 'center',
-        margin:50,
+        margin: 50,
     },
     STATUS_JOGANDO: {
         backgroundColor: '#aaa',
