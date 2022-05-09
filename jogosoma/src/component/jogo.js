@@ -90,14 +90,14 @@ class Jogo extends React.Component {
                         />
                     ))}
                 </View>
-                <Button title='Jogar de novo' onPress={this.props.onPlayAgain} />
+                {this.statusDoJogo !== 'JOGANDO' && (
+                    <Button title='Jogar de novo' onPress={this.props.onPlayAgain} />
+                )}
                 <Text>{this.state.tempoRestante}</Text>
             </View>
         );
     }
 }
-
-// Resetar
 
 const estilos = StyleSheet.create({
     containerNumerosAleatorios: {
