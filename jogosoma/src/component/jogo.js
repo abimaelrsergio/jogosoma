@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import NumeroAleatorio from './numero-aleatorio.js';
 
 class Jogo extends React.Component {
     static propTypes = {
         totalNumeroRandomico: PropTypes.number.isRequired,
-        tempoJogo: PropTypes.number.isRequired
+        tempoJogo: PropTypes.number.isRequired,
+        onPlayAgain: PropTypes.func.isRequired
     };
     state = {
+        gameId: 1,
         idsSelecionados: [],
         tempoRestante: this.props.tempoJogo
     };
@@ -37,7 +39,6 @@ class Jogo extends React.Component {
             }
         }
     }
-
     numerosAleatorios = Array
         .from({ length: this.props.totalNumeroRandomico })
         .map(() => 1 + Math.floor(10 * Math.random()));
@@ -89,11 +90,14 @@ class Jogo extends React.Component {
                         />
                     ))}
                 </View>
+                <Button title='Jogar de novo' onPress={this.props.onPlayAgain} />
                 <Text>{this.state.tempoRestante}</Text>
             </View>
         );
     }
 }
+
+// Resetar
 
 const estilos = StyleSheet.create({
     containerNumerosAleatorios: {
